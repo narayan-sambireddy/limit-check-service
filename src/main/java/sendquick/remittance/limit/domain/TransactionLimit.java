@@ -6,11 +6,15 @@ public class TransactionLimit {
 
     private String customerId;
     private String payeeId;
-    private Date payeeCreationDate;
+
+    private String sourceCountry;
+    private String sourceCurrency;
+
+    private String destinationCountry;
+    private String destinationCurrency;
 
     private Double remitAmount;
-
-    private Date createdDate;
+    private Double exchangeRateUSD;
 
     public String getCustomerId() {
         return customerId;
@@ -28,20 +32,36 @@ public class TransactionLimit {
         this.payeeId = payeeId;
     }
 
-    public Date getPayeeCreationDate() {
-        return payeeCreationDate;
+    public String getSourceCountry() {
+        return sourceCountry;
     }
 
-    public void setPayeeCreationDate(Date payeeCreationDate) {
-        this.payeeCreationDate = payeeCreationDate;
+    public void setSourceCountry(String sourceCountry) {
+        this.sourceCountry = sourceCountry;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public String getSourceCurrency() {
+        return sourceCurrency;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setSourceCurrency(String sourceCurrency) {
+        this.sourceCurrency = sourceCurrency;
+    }
+
+    public String getDestinationCountry() {
+        return destinationCountry;
+    }
+
+    public void setDestinationCountry(String destinationCountry) {
+        this.destinationCountry = destinationCountry;
+    }
+
+    public String getDestinationCurrency() {
+        return destinationCurrency;
+    }
+
+    public void setDestinationCurrency(String destinationCurrency) {
+        this.destinationCurrency = destinationCurrency;
     }
 
     public Double getRemitAmount() {
@@ -51,4 +71,13 @@ public class TransactionLimit {
     public void setRemitAmount(Double remitAmount) {
         this.remitAmount = remitAmount;
     }
+
+    public Double getExchangeRateUSD() {
+        return exchangeRateUSD;
+    }
+
+    public void setExchangeRateUSD(Double exchangeRateUSD) {
+        this.exchangeRateUSD = exchangeRateUSD;
+    }
+
 }

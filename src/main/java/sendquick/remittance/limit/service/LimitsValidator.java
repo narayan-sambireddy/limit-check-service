@@ -41,6 +41,9 @@ public class LimitsValidator {
     @Value("${REMITTANCE_NOT_ALLOWED_IN_COOL_OFF_HOURS}")
     private String REMITTANCE_NOT_ALLOWED_IN_COOL_OFF_HOURS;
 
+    @Value("${REMIT_AMT_FALLS_BELOW_MIN_TRANSACTION_AMT}")
+    private String REMIT_AMT_FALLS_BELOW_MIN_TRANSACTION_AMT;
+
     private static final Long HOUR_IN_MILLIS = 60 * 60 * 1000L;
 
     Consumer<Double> checkDailyLimitShouldNotExceedYearlyLimit = dailyLimit -> {
@@ -50,6 +53,11 @@ public class LimitsValidator {
 
     Consumer<Double> checkDailyLimitShouldNotBeLessThanMinTransactionAmount = dailyLimit -> {
         if (dailyLimit < MIN_REMIT_AMT)
+            throw new LimitServiceException(DAILY_LIMIT_FALLS_BELOW_MIN_TRANSACTION_AMT);
+    };
+
+    Consumer<Double> checkRemitAmountShouldNotBeLessThanMinTransactionAmount = remitAmount -> {
+        if (remitAmount < MIN_REMIT_AMT)
             throw new LimitServiceException(DAILY_LIMIT_FALLS_BELOW_MIN_TRANSACTION_AMT);
     };
 

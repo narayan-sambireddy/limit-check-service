@@ -1,7 +1,9 @@
 package sendquick.remittance.limit.transformer;
 
 import sendquick.remittance.limit.domain.AccountLimit;
+import sendquick.remittance.limit.domain.TransactionLimit;
 import sendquick.remittance.limit.entity.AccountLimitEntity;
+import sendquick.remittance.limit.entity.TransactionLimitEntity;
 
 import java.util.function.Function;
 
@@ -30,4 +32,30 @@ public class LimitDomainTransformer {
         entity.setLastModifiedDate(domain.getLastModifiedDate());
         return entity;
     };
+
+    public static Function<TransactionLimitEntity, TransactionLimit> transactionEntityToDomain = (entity) ->
+        new TransactionLimit() {{
+            setCustomerId(entity.getCustomerId());
+            setPayeeId(entity.getPayeeId());
+            setRemitAmount(entity.getRemitAmount());
+            setSourceCountry(entity.getSourceCountry());
+            setSourceCurrency(entity.getSourceCurrency());
+            setDestinationCountry(entity.getDestinationCountry());
+            setDestinationCurrency(entity.getDestinationCurrency());
+            setExchangeRateUSD(entity.getExchangeRateUSD());
+        }};
+
+    public static Function<TransactionLimit, TransactionLimitEntity> transactionDomainToEntity = (domain) -> {
+        TransactionLimitEntity entity = new TransactionLimitEntity();
+        entity.setCustomerId(domain.getCustomerId());
+        entity.setPayeeId(domain.getPayeeId());
+        entity.setRemitAmount(domain.getRemitAmount());
+        entity.setSourceCountry(domain.getSourceCountry());
+        entity.setSourceCurrency(domain.getSourceCurrency());
+        entity.setDestinationCountry(domain.getDestinationCountry());
+        entity.setDestinationCurrency(domain.getDestinationCurrency());
+        entity.setExchangeRateUSD(domain.getExchangeRateUSD());
+        return entity;
+    };
+
 }

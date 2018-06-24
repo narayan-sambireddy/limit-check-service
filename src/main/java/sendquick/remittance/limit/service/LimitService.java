@@ -1,12 +1,16 @@
 package sendquick.remittance.limit.service;
 
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.stereotype.Service;
 import sendquick.remittance.limit.domain.AccountLimit;
 import sendquick.remittance.limit.domain.TransactionLimit;
 import sendquick.remittance.limit.domain.ValidationResult;
 import sendquick.remittance.limit.entity.AccountLimitEntity;
+import sendquick.remittance.limit.entity.TransactionLimitEntity;
 import sendquick.remittance.limit.repo.AccountLimitRepo;
 import sendquick.remittance.limit.repo.TransactionLimitRepo;
+
+import java.util.Date;
 
 import static sendquick.remittance.limit.transformer.LimitDomainTransformer.*;
 
@@ -31,13 +35,24 @@ public class LimitService {
         return accountEntityToDomain.apply(entity);
     }
 
-    public ValidationResult validate(TransactionLimit transactionLimit) {
+    public ValidationResult validate(TransactionLimit tranLimit) {
         ValidationResult result = new ValidationResult();
-        AccountLimit accountLimit = fetch(transactionLimit.getCustomerId());
-
-        limitsValidator.checkRemittanceNotAllowedInCoolOffHours.accept(transactionLimit.getPayeeCreationDate());
-        limitsValidator.checkRemitAmountShouldNotExceedDailyLimit.accept(transactionLimit.getRemitAmount(), accountLimit.getRemainingDailyLimit());
-        limitsValidator.checkRemitAmountShouldNotExceedYearlyLimit.accept(transactionLimit.getRemitAmount(), accountLimit.getRemainingYearlyLimit());
+        TransactionLimitEntity transactionLimitEntity = transactionDomainToEntity.apply(tranLimit);
+        transactionLimitEntity.setStatus("SUCCESS");
+        try {
+            AccountLimit acctLimit = fetch(tranLimit.getCustomerId());
+            Date payeeCreationDate = new Date();
+            limitsValidator.checkDailyLimitShouldNotBeLessThanMinTransactionAmount.accept(tranLimit.getRemitAmount());
+            limitsValidator.checkRemittanceNotAllowedInCoolOffHours.accept(payeeCreationDate);
+            limitsValidator.checkRemitAmountShouldNotExceedDailyLimit.accept(tranLimit.getRemitAmount(), acctLimit.getRemainingDailyLimit());
+            limitsValidator.checkRemitAmountShouldNotExceedYearlyLimit.accept(tranLimit.getRemitAmount(), acctLimit.getRemainingYearlyLimit());
+        }catch (Exception ex) {
+            transactionLimitEntity.setStatus("FAILED");
+            transactionLimitEntity.setRemarks(ex.getMessage());
+            throw ex;
+        }finally {
+            transactionLimitRepo.save(transactionLimitEntity);
+        }
 
         return result;
     }
