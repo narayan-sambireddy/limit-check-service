@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author narayana
@@ -42,32 +43,31 @@ public class LimitsValidator {
 
     private static final Long HOUR_IN_MILLIS = 60 * 60 * 1000L;
 
-    Consumer<Double> newDailyLimitShouldNotExceedYearlyLimit =  dailyLimit -> {
+    Consumer<Double> checkDailyLimitShouldNotExceedYearlyLimit = dailyLimit -> {
         if (dailyLimit > YEARLY_LIMIT)
             throw new LimitServiceException(DAILY_LIMIT_EXCEEDS_YEARLY_LIMIT);
     };
 
-    Consumer<Double> newDailyLimitShouldNotBeLessThanMinTransactionAmount = dailyLimit -> {
+    Consumer<Double> checkDailyLimitShouldNotBeLessThanMinTransactionAmount = dailyLimit -> {
         if (dailyLimit < MIN_REMIT_AMT)
             throw new LimitServiceException(DAILY_LIMIT_FALLS_BELOW_MIN_TRANSACTION_AMT);
     };
 
-    BiConsumer<Double, Double> remitAmountShouldNotExceedDailyLimit = (remitAmount, remainingDailyLimit) -> {
+    BiConsumer<Double, Double> checkRemitAmountShouldNotExceedDailyLimit = (remitAmount, remainingDailyLimit) -> {
         if (remitAmount > remainingDailyLimit)
             throw new LimitServiceException(REMIT_AMT_EXCEEDS_DAILY_LIMIT);
     };
 
-    BiConsumer<Double, Double> remitAmountShouldNotExceedYearlyLimit = (remitAmount, remainingYearlyLimit) -> {
+    BiConsumer<Double, Double> checkRemitAmountShouldNotExceedYearlyLimit = (remitAmount, remainingYearlyLimit) -> {
         if (remitAmount > remainingYearlyLimit)
             throw new LimitServiceException(REMIT_AMT_EXCEEDS_YEARLY_LIMIT);
     };
 
-    Consumer<Date> remittanceNotAllowedInCoolOffHours = payeeCreationDate -> {
+    Consumer<Date> checkRemittanceNotAllowedInCoolOffHours = payeeCreationDate -> {
         long nowInMillis = System.currentTimeMillis() - payeeCreationDate.getTime();
         long coolOffInMillis = HOUR_IN_MILLIS * COOL_OF_HOURS;
         if (nowInMillis < coolOffInMillis)
             throw new LimitServiceException(REMITTANCE_NOT_ALLOWED_IN_COOL_OFF_HOURS);
-
     };
 
 }
