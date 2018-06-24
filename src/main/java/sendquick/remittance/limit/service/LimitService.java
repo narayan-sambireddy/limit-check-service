@@ -10,20 +10,20 @@ import sendquick.remittance.limit.repo.TransactionLimitRepo;
 
 import static sendquick.remittance.limit.transformer.LimitDomainTransformer.*;
 
-import java.util.function.Function;
-
 /**
  * @author narayana
  */
 @Service
 public class LimitService {
 
-    private AccountLimitRepo accountLimitRepo;
+    private final AccountLimitRepo accountLimitRepo;
     private final TransactionLimitRepo transactionLimitRepo;
+    private final LimitsValidator limitsValidator;
 
-    public LimitService(AccountLimitRepo accountLimitRepo, TransactionLimitRepo transactionLimitRepo) {
+    public LimitService(AccountLimitRepo accountLimitRepo, TransactionLimitRepo transactionLimitRepo, LimitsValidator limitsValidator) {
         this.accountLimitRepo = accountLimitRepo;
         this.transactionLimitRepo = transactionLimitRepo;
+        this.limitsValidator = limitsValidator;
     }
 
     public AccountLimit fetch(String customerId) {
@@ -32,10 +32,20 @@ public class LimitService {
     }
 
     public ValidationResult validate(TransactionLimit transactionLimit) {
-        return null;
+        ValidationResult result = new ValidationResult();
+        AccountLimit accountLimit = fetch(transactionLimit.getCustomerId());
+
+        limitsValidator.remittanceNotAllowedInCoolOffHours.accept(transactionLimit.getPayeeCreationDate());
+        limitsValidator.remitAmountShouldNotExceedDailyLimit.accept(transactionLimit.getRemitAmount(), accountLimit.getRemainingDailyLimit());
+        limitsValidator.remitAmountShouldNotExceedYearlyLimit.accept(transactionLimit.getRemitAmount(), accountLimit.getRemainingYearlyLimit());
+
+        return result;
     }
 
     public AccountLimit save(AccountLimit accountLimit) {
+        double dailyLimit = accountLimit.getDailyLimit();
+        limitsValidator.newDailyLimitShouldNotBeLessThanMinTransactionAmount.accept(dailyLimit);
+        limitsValidator.newDailyLimitShouldNotExceedYearlyLimit.accept(dailyLimit);
         AccountLimitEntity entity = accountLimitRepo.save(accountDomainToEntity.apply(accountLimit));
         return accountEntityToDomain.apply(entity);
     }
