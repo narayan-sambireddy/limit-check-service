@@ -12,5 +12,5 @@ import sendquick.remittance.limit.entity.TransactionLimitEntity;
 @Repository
 public interface TransactionLimitRepo extends JpaRepository<TransactionLimitEntity, Long> {
 
-    TransactionLimitEntity findOneByCustomerIdAndPayeeIdOrderByCreatedDateDesc(String customerId, String payeeId);
+    TransactionLimitEntity findFirstByCustomerIdAndPayeeIdOrderByCreatedDateDesc(String customerId, String payeeId);
 }

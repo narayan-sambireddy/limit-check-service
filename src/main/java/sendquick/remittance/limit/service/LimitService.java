@@ -39,9 +39,21 @@ public class LimitService {
         ValidationResult result = new ValidationResult();
         TransactionLimitEntity transactionLimitEntity = transactionDomainToEntity.apply(tranLimit);
         transactionLimitEntity.setStatus("SUCCESS");
+
+        Date payeeCreationDate = null;
         try {
             AccountLimit acctLimit = fetch(tranLimit.getCustomerId());
-            Date payeeCreationDate = new Date();
+
+            TransactionLimitEntity previousTransaction = transactionLimitRepo.findFirstByCustomerIdAndPayeeIdOrderByCreatedDateDesc(
+                    tranLimit.getCustomerId(), tranLimit.getPayeeId());
+
+            if(previousTransaction != null) {
+                payeeCreationDate = previousTransaction.getPayeeCreationDate(); //TODO:: fetch from payee-service
+            }else {
+                //FETCH payeeCreationDate FROM payee-service
+                payeeCreationDate = new Date();
+            }
+            transactionLimitEntity.setPayeeCreationDate(payeeCreationDate);
             limitsValidator.checkDailyLimitShouldNotBeLessThanMinTransactionAmount.accept(tranLimit.getRemitAmount());
             limitsValidator.checkRemittanceNotAllowedInCoolOffHours.accept(payeeCreationDate);
             limitsValidator.checkRemitAmountShouldNotExceedDailyLimit.accept(tranLimit.getRemitAmount(), acctLimit.getRemainingDailyLimit());
