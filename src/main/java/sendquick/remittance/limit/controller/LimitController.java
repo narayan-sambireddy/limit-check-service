@@ -21,17 +21,12 @@ public class LimitController {
 
     @GetMapping
     public AccountLimit fetch(@RequestParam String customerId) {
-        AccountLimitEntity accountLimitEntity = limitService.fetch(customerId);
-        AccountLimit accountLimit = new AccountLimit();
-        accountLimit.setCustomerId(accountLimitEntity.getCustomerId());
-        accountLimit.setDailyLimit(accountLimitEntity.getDailyLimit());
-        return accountLimit;
+        return limitService.fetch(customerId);
     }
 
     @PutMapping
-    public AccountLimitEntity save(@RequestBody AccountLimitEntity accountLimit) {
-        AccountLimitEntity savedLimit = limitService.save(accountLimit);
-        return savedLimit;
+    public AccountLimit save(@RequestBody AccountLimit accountLimit) {
+        return limitService.save(accountLimit);
     }
 
     @PostMapping

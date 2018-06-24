@@ -8,6 +8,13 @@ import sendquick.remittance.limit.entity.AccountLimitEntity;
 import sendquick.remittance.limit.repo.AccountLimitRepo;
 import sendquick.remittance.limit.repo.TransactionLimitRepo;
 
+import static sendquick.remittance.limit.transformer.LimitDomainTransformer.*;
+
+import java.util.function.Function;
+
+/**
+ * @author narayana
+ */
 @Service
 public class LimitService {
 
@@ -19,15 +26,17 @@ public class LimitService {
         this.transactionLimitRepo = transactionLimitRepo;
     }
 
-    public AccountLimitEntity fetch(String customerId) {
-        return accountLimitRepo.getOne(customerId);
+    public AccountLimit fetch(String customerId) {
+        AccountLimitEntity entity = accountLimitRepo.getOne(customerId);
+        return accountEntityToDomain.apply(entity);
     }
 
     public ValidationResult validate(TransactionLimit transactionLimit) {
         return null;
     }
 
-    public AccountLimitEntity save(AccountLimitEntity accountLimit) {
-        return accountLimitRepo.save(accountLimit);
+    public AccountLimit save(AccountLimit accountLimit) {
+        AccountLimitEntity entity = accountLimitRepo.save(accountDomainToEntity.apply(accountLimit));
+        return accountEntityToDomain.apply(entity);
     }
 }
