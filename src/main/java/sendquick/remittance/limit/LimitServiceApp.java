@@ -5,13 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import sendquick.remittance.limit.domain.AccountLimit;
 
+/**
+ * @author narayana
+ */
 @SpringBootApplication
 public class LimitServiceApp {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LimitServiceApp.class, args);
-		
-		AccountLimit al = new AccountLimit();
 	}
 
 }

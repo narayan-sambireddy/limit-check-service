@@ -1,5 +1,8 @@
 package sendquick.remittance.limit.domain;
 
+/**
+ * @author narayana
+ */
 public class ValidationResult {
 
     private String message;

@@ -1,8 +1,8 @@
 package sendquick.remittance.limit.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
+/**
+ * @author narayana
+ */
 public class LimitServiceResponse {
 
     private String errorMessage;

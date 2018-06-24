@@ -9,8 +9,11 @@ import sendquick.remittance.limit.domain.ValidationResult;
 import sendquick.remittance.limit.entity.AccountLimitEntity;
 import sendquick.remittance.limit.service.LimitService;
 
+/**
+ * @author narayana
+ */
 @RestController
-@RequestMapping("/sendquick/remittance/limit")
+@RequestMapping("/quicksend/remittance/limit")
 public class LimitController {
 
     private final LimitService limitService;
@@ -31,8 +34,7 @@ public class LimitController {
 
     @PostMapping
     public ValidationResult validate(@RequestBody TransactionLimit transactionLimit) {
-        ValidationResult result = limitService.validate(transactionLimit);
-        return result;
+        return limitService.validate(transactionLimit);
     }
 
 }
