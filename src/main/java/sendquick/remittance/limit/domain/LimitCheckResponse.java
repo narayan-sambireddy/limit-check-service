@@ -17,8 +17,8 @@ public class LimitCheckResponse<T> {
         this.data = data;
     }
 
-    public static LimitCheckResponse of(Integer code, T data) {
-        return new LimitCheckResponse(code, data);
+    public static <T> LimitCheckResponse<T> of(Integer code, T data) {
+        return new LimitCheckResponse<T>(code, data);
     }
 
     public T getData() {
