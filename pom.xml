@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>sendquick.remittance</groupId>
-	<artifactId>remittance-limit-service</artifactId>
+	<artifactId>limit-check-service</artifactId>
 	<version>2018.06.24</version>
 
-	<name>remittance-limit-service</name>
+	<name>limit-check-service</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
